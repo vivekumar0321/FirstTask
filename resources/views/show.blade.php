@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Laravel DataTable Example</title>
+    <title>Laravel</title>
 
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -10,13 +10,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
 
     <div class="container">
-        <h2>User Data</h2>
-        <table id="userTable" class="display">
+        <h2>All Users</h2>
+        <a href="{{ route('create-form') }}" class="btn btn-primary float-end mb-3"> Add New user</a>
+        <table id="userTable" class="display table-hover table-responsive">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -48,25 +51,45 @@
                         <td>{{ $user->p_name }}</td>
                         <td>{{ $user->p_age }}</td>
                         <td>
-                        <a href="{{ route('user.qr', $user->id) }}" class="btn btn-primary">Generate QR Code</a>
-                        @if(session('qr'))
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#myModal"
+                                onclick="generateQRCode({{ $user->id }})">Generate QR Code</a>
                         </td>
-                        <h3>QR Code for {{ $user->name }}:</h3>
-                        <img src="data:image/png;base64, {{ session('qr') }}" alt="QR Code">
-                    @endif
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-
-    <!-- Initialize DataTable -->
-    <script>
-        $(document).ready(function() {
-            $('#userTable').DataTable();
-        });
-    </script>
-
 </body>
 
 </html>
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Scan QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="qrCodeContent">
+                Loading QR Code...
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#userTable').DataTable();
+    });
+
+    function generateQRCode(userId) {
+        $.ajax({
+            url: `/generate-qr-code/${userId}`,
+            method: 'GET',
+            success: function(response) {
+                $('#qrCodeContent').html(response.qrCode);
+            },
+            error: function() {
+                $('#qrCodeContent').html('Error generating QR code.');
+            }
+        });
+    }
+</script>

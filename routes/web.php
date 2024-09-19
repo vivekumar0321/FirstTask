@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use Milon\Barcode\Facades\DNS2D;
+use App\Models\User;
 
-Route::get('/', function () {
+Route::get('create', function () {
     return view('index');
-});
-Route::post('index',[HomeController::class,'create'])->name('create');
-Route::get('show',[HomeController::class,'show'])->name('show');
+})->name('create-form');
 
-
-Route::get('/user/{id}/generate-qr', [HomeController::class, 'generateQrCode'])->name('user.qr');
+Route::get('/',[HomeController::class,'show'])->name('show');
+Route::post('create',[HomeController::class,'create'])->name('create');
+Route::get('/generate-qr-code/{id}', [HomeController::class, 'generateQrCode']);

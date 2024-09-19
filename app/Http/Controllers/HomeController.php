@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\User;
+use DNS2D;
 
 class HomeController extends Controller
 {
@@ -25,6 +24,7 @@ class HomeController extends Controller
             'occupation' => 'required',
             'marital' => 'required'
         ]);
+        $number = mt_rand(11111111111,99999999999);
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -36,23 +36,18 @@ class HomeController extends Controller
         $user->marital_staus = $request->marital;
         $user->p_name = $request->p_name;
         $user->p_age = $request->p_age;
-
+        $user->account_number = $number;
         $user->save();
-        return response()->json(['message' => 'Data inserted successfully']);
+        return redirect()->route('show')->with('success',"Data Inserted.");
     }
 
     public function generateQrCode($id)
     {
-        // Fetch user details
-        $user = User::findOrFail($id);
-
-        // Generate QR code data (you can customize this as needed)
-        $qrData = 'Name: ' . $user->name . ', Email: ' . $user->email . ', Contact: ' . $user->contact;
-
-        // Generate QR code in base64
-        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($qrData));
-
-        // Redirect back with the QR code in session
-        return redirect()->back()->with(['qr' => $qrCode]);
+        $user = User::find($id);
+        if ($user) {
+            $qrCode = DNS2D::getBarcodeHTML("$user->name,$user->email,$user->contact,$user->state,$user->city", "QRCODE", 4, 4);
+            return response()->json(['qrCode' => $qrCode]);
+        }
+        return response()->json(['qrCode' => 'User not found']);
     }
 }

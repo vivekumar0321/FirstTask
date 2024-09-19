@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('mobile');
+            $table->string('contact');
             $table->string('age');
             $table->string('state');
             $table->string('city');
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('marital_staus');
             $table->string('p_name')->nullable();
             $table->string('p_age')->nullable();
+            $table->string('account_number');
             $table->timestamps(); 
         });
 
