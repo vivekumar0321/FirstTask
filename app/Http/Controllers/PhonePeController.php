@@ -33,8 +33,8 @@ class PhonePeController extends Controller
         $sha256 =hash('sha256',$string);
         $finalXHeader = $sha256."###".$saltIndex;
     
-        $response = Curl::to('https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay')
-        // $response = Curl::to('https://api-preprod.phonepe.com/apis/merchant-simulator/pg/v1/pay')
+        // $response = Curl::to('https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay')
+        $response = Curl::to('https://api-preprod.phonepe.com/apis/merchant-simulator/pg/v1/pay')
                     ->withHeader('Content-Type:application/json')
                     ->withHeader('X-VERIFY:'.$finalXHeader)
                     ->withData(json_encode(['request' =>$encode]))
